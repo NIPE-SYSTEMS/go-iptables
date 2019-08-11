@@ -248,6 +248,11 @@ func runRulesTests(t *testing.T, ipt *IPTables) {
 		t.Fatalf("Append failed: %v", err)
 	}
 
+	err = ipt.DeleteAt("filter", chain, 4)
+	if err != nil {
+		t.Fatalf("DeleteAt failed: %v", err)
+	}
+
 	rules, err := ipt.List("filter", chain)
 	if err != nil {
 		t.Fatalf("List failed: %v", err)
@@ -258,7 +263,6 @@ func runRulesTests(t *testing.T, ipt *IPTables) {
 		"-A " + chain + " -s " + subnet1 + " -d " + address1 + " -j ACCEPT",
 		"-A " + chain + " -s " + subnet2 + " -d " + address2 + " -j ACCEPT",
 		"-A " + chain + " -s " + subnet2 + " -d " + address1 + " -j ACCEPT",
-		"-A " + chain + " -s " + address1 + " -d " + subnet2 + " -j ACCEPT",
 	}
 
 	if !reflect.DeepEqual(rules, expected) {
@@ -280,7 +284,6 @@ func runRulesTests(t *testing.T, ipt *IPTables) {
 		"-A " + chain + " -s " + subnet1 + " -d " + address1 + suffix,
 		"-A " + chain + " -s " + subnet2 + " -d " + address2 + suffix,
 		"-A " + chain + " -s " + subnet2 + " -d " + address1 + suffix,
-		"-A " + chain + " -s " + address1 + " -d " + subnet2 + suffix,
 	}
 
 	if !reflect.DeepEqual(rules, expected) {
@@ -301,7 +304,6 @@ func runRulesTests(t *testing.T, ipt *IPTables) {
 		{"0", "0", "ACCEPT", "all", opt, "*", "*", subnet1, address1, ""},
 		{"0", "0", "ACCEPT", "all", opt, "*", "*", subnet2, address2, ""},
 		{"0", "0", "ACCEPT", "all", opt, "*", "*", subnet2, address1, ""},
-		{"0", "0", "ACCEPT", "all", opt, "*", "*", address1, subnet2, ""},
 	}
 
 	if !reflect.DeepEqual(stats, expectedStats) {
@@ -324,7 +326,6 @@ func runRulesTests(t *testing.T, ipt *IPTables) {
 		{0, 0, "ACCEPT", "all", opt, "*", "*", subnet1CIDR, address1CIDR, ""},
 		{0, 0, "ACCEPT", "all", opt, "*", "*", subnet2CIDR, address2CIDR, ""},
 		{0, 0, "ACCEPT", "all", opt, "*", "*", subnet2CIDR, address1CIDR, ""},
-		{0, 0, "ACCEPT", "all", opt, "*", "*", address1CIDR, subnet2CIDR, ""},
 	}
 
 	if !reflect.DeepEqual(structStats, expectedStructStats) {

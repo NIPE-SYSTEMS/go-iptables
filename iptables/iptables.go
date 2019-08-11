@@ -175,6 +175,11 @@ func (ipt *IPTables) Delete(table, chain string, rulespec ...string) error {
 	return ipt.run(cmd...)
 }
 
+// DeleteAt removes a rule at pos in specified table/chain
+func (ipt *IPTables) DeleteAt(table, chain string, pos int) error {
+	return ipt.run([]string{"-t", table, "-D", chain, strconv.Itoa(pos)}...)
+}
+
 // List rules in specified table/chain
 func (ipt *IPTables) List(table, chain string) ([]string, error) {
 	args := []string{"-t", table, "-S", chain}
